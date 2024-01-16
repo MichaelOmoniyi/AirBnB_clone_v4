@@ -11,7 +11,7 @@ $(document).ready(function () {
         $(".amenities h4").text(Objects.keys(amenities).sort().join(", "));
     });
 
-    $.getJSON("http://0.0.0.0:5001/api/v1/status/", (data) => {
+    $.get(api + ":5001/api/v1/status/", (data) => {
         if (data.status === "OK") {
             $("div#api_status").addClass("available");
         } else {
@@ -25,7 +25,23 @@ $(document).ready(function () {
     data: '{}',
     contentType: 'application/json',
     dataType: 'json',
-    success: function (data) {
+    success: appendPlaces;
+    });
+
+    $('BUTTON').click(function () {
+    $.ajax({
+      url: api + ':5001/api/v1/places_search/',
+      type: 'POST',
+      data: JSON.stringify({ 'amenities': Object.keys(amenities) }),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: appendPlaces
+    });
+  });
+});
+    
+function appendPlaces (data) {
+      $('SECTION.places').empty();
       $('SECTION.places').append(data.map(place => {
         return `<ARTICLE>
                   <DIV class="title">
@@ -56,6 +72,4 @@ $(document).ready(function () {
                   </DIV>
                 </ARTICLE>`;
       }));
-    }
-  });
-});
+}
